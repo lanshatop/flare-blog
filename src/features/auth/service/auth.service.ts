@@ -10,13 +10,8 @@ export async function userHasPassword(context: AuthContext) {
 }
 
 export async function getIsEmailConfigured(
-  context: DbContext & { executionCtx: ExecutionContext },
+  _context: DbContext & { executionCtx: ExecutionContext },
 ) {
-  const config = await ConfigService.getSystemConfig(context);
-  return !!(
-    config?.email?.host &&
-    config.email.username &&
-    config.email.password &&
-    config.email.senderAddress
-  );
+  // emailAndPassword is enabled in auth config; show email/password login form
+  return true;
 }
