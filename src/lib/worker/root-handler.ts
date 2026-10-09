@@ -27,5 +27,13 @@ export function handleRootRequest(
   env: Env,
   ctx: ExecutionContext,
 ) {
-  return getOAuthProvider().fetch(request, env, ctx);
+  try {
+    return getOAuthProvider().fetch(request, env, ctx);
+  } catch (e) {
+    const err = e instanceof Error ? e : new Error(String(e));
+    return new Response(
+      `<pre style="padding:20px;font:14px monospace;white-space:pre-wrap">ROOT-HANDLER ERROR\n${(err.stack || err.message).replace(/</g, "&lt;")}</pre>`,
+      { status: 500, headers: { "content-type": "text/html; charset=utf-8" } },
+    );
+  }
 }
