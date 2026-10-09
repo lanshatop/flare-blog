@@ -26,6 +26,14 @@ import {
 
 export const app = new Hono<{ Bindings: Env }>();
 
+app.onError((e, c) => {
+  const err = e instanceof Error ? e : new Error(String(e));
+  return c.html(
+    `<pre style="padding:20px;font:14px monospace;white-space:pre-wrap">${(err.stack || err.message).replace(/</g, "&lt;")}</pre>`,
+    500,
+  );
+});
+
 app.get("*", cacheMiddleware);
 
 async function forwardAuthRequest(c: Context<{ Bindings: Env }>) {
