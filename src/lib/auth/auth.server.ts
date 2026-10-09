@@ -36,6 +36,8 @@ export function getAuth({ db, env }: { db: DB; env: Env }) {
     GITHUB_CLIENT_SECRET,
   } = serverEnv(env);
 
+  const hasGithubOAuth = Boolean(GITHUB_CLIENT_ID && GITHUB_CLIENT_ID.trim());
+
   // 固定 10 个 DO 实例池，随机选择避免冷启动
   const PASSWORD_HASHER_POOL_SIZE = 10;
   function getPasswordHasher() {
@@ -54,12 +56,14 @@ export function getAuth({ db, env }: { db: DB; env: Env }) {
 
   return betterAuth({
     ...createAuthConfig(),
-    socialProviders: {
-      github: {
-        clientId: GITHUB_CLIENT_ID,
-        clientSecret: GITHUB_CLIENT_SECRET,
-      },
-    },
+    socialProviders: hasGithubOAuth
+      ? {
+          github: {
+            clientId: GITHUB_CLIENT_ID,
+            clientSecret: GITHUB_CLIENT_SECRET,
+          },
+        }
+      : {},
     hooks: {
       before: createAuthMiddleware(async (ctx) => {
         if (ctx.path !== "/sign-up/email") return;
@@ -79,7 +83,7 @@ export function getAuth({ db, env }: { db: DB; env: Env }) {
     },
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: true,
+      requireEmailVerification: false,
       password: {
         hash: (password: string) => getPasswordHasher().hash(password),
         verify: (params: { hash: string; password: string }) =>
