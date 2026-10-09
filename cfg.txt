@@ -1,0 +1,15 @@
+﻿
+{
+  "error": {
+    "text": "A request to the Cloudflare API (/accounts/f12422663ab897b01375e7554bd5b207/d1/database/1aa2a46b-78a8-4071-9c80-d05c9b5d9f48/query) failed.",
+    "notes": [
+      {
+        "text": "no such column: key at offset 7: SQLITE_ERROR [code: 7500]"
+      }
+    ],
+    "kind": "error",
+    "name": "APIError",
+    "code": 7500,
+    "accountTag": "f12422663ab897b01375e7554bd5b207"
+  }
+}

@@ -22,8 +22,16 @@ declare module "@tanstack/react-start" {
 
 export default {
   async fetch(request, env, ctx) {
-    const { handleRootRequest } = await import("@/lib/worker/root-handler");
-    return handleRootRequest(request, env, ctx);
+    try {
+      const { handleRootRequest } = await import("@/lib/worker/root-handler");
+      return await handleRootRequest(request, env, ctx);
+    } catch (e) {
+      const err = e instanceof Error ? e : new Error(String(e));
+      return new Response(
+        `<!DOCTYPE html><pre style="padding:20px;font:14px monospace;white-space:pre-wrap">${(err.stack || err.message).replace(/</g, "&lt;")}</pre>`,
+        { status: 500, headers: { "content-type": "text/html; charset=utf-8" } },
+      );
+    }
   },
   async queue(batch, env, ctx) {
     await handleQueueBatch(batch, env, ctx);
